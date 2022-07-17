@@ -1,3 +1,2 @@
 # Aperta
-Vincula Gratis
-Knocking Down Paywalls
+Vincula Gratis | Knocking Down Paywalls

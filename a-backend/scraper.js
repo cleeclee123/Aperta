@@ -47,9 +47,7 @@ const rotateUserAgent = async function () {
   let userAgents = [];
 
   await axios
-    .get(
-      "https://github.com/tamimibrahim17/List-of-user-agents/blob/master/Chrome.txt"
-    )
+    .get("https://github.com/tamimibrahim17/List-of-user-agents/blob/master/Chrome.txt")
     .then(async function (repsonse) {
       // load html with cheerio
       const $ = cheerio.load(repsonse.data);
@@ -57,26 +55,23 @@ const rotateUserAgent = async function () {
       // loop through tr tag, loop through table tag, grab second nth-child
       // check for space (valid user agent) and will only scrap windows uas
       $("tr > td:nth-child(2)").each((index, element) => {
-        if (
-          $(element).text().includes(" ") &&
-          $(element).text().includes("(Windows")
-        ) {
+        if ($(element).text().includes(" ") && $(element).text().includes("(Windows")) {
           userAgents[index] = $(element).text();
         }
       });
 
       userAgents.join(", ");
     })
-    .catch(async function (error) {
+    .catch(async function(error) {
       // console.log(error.response);
       // throw new Error("User Agent Rotation Error");
-      return `${ERROR_MESSAGE} ${error}`
+      return `${ERROR_MESSAGE_R} ${error}`;
     });
 
   let randomNumber = Math.floor(Math.random() * 100);
   let rotatedUserAgent = userAgents[randomNumber];
   return String(rotatedUserAgent);
-};
+}
 
 // write request header interface for bing
 // referer to https://t.co/ (Twitter's link service)
@@ -96,6 +91,7 @@ const OPTIONS = {
     "Sec-Fetch-User": "?1",
     "Upgrade-Insecure-Requests": "1",
     "User-Agent": rotateUserAgent(),
+    "X-Forwarded-For": "66.102.0.0",
     "X-Amzn-Trace-Id": "Root=1-629e4d2d-69ff09fd3184deac1df68d18",
     Proxy: generateProxy(),
   },
@@ -131,18 +127,25 @@ const getPageHTML = async function (url) {
         var script = allScripts[i];
         script.remove();
       }
+
       return root.innerHTML;
+    })
+    .catch((error) => {
+      return `${ERROR_MESSAGE_R} ${error}`;
     });
 };
+
+// Solution 2
+// Cache page 
+// scraper to get title of article
+// search to google search engine, get cache url, return 
 
 module.exports = {
   getPageHTML
 };
 
-
-
-// const url = "https://www.bloomberg.com/news/articles/2022-07-23/california-governor-newsom-tries-to-speed-energy-transition-in-climate-fight?srnd=premium#xj4y7vzkg";
-// const test = loadPageData(url);
+// const url = "https://www.washingtonpost.com/investigations/2022/07/24/grooming-sex-ed-nebraska-judith-reisman/";
+// const test = getPageHTML(url);
 // test.then(function(data) {
 //   console.log(data);
 // });

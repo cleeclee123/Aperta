@@ -108,3 +108,6 @@ node_modules
 
 # .env file
 .env
+
+# testing html file
+test.html

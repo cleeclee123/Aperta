@@ -2,7 +2,8 @@ const cheerio = require("cheerio");
 const axios = require("axios");
 const HTMLParser = require('node-html-parser');
 
-const ERROR_MESSAGE = "Sorry, an error as occured. Please try again";
+const ERROR_MESSAGE_R = "Sorry, an error as occured. Please try again";
+const ERROR_MESSAGE_U = "Not a Valid URL!";
 
 // ROTATION FUNCTIONS FROM Project-Helper-Function
 
@@ -33,7 +34,7 @@ const generateProxy = async function () {
     .catch(async function (error) {
       // console.log(error.response);
       // throw new Error("Proxy Rotation Scrap Error");
-      return `${ERROR_MESSAGE} ${error}`
+      return `${ERROR_MESSAGE_R} ${error}`;
     });
 
   let randomNumber = Math.floor(Math.random() * 100);
@@ -111,10 +112,11 @@ function isValidHttpUrl(string) {
 // load call page from axios
 const getPageHTML = async function (url) {
   if (!isValidHttpUrl(url)) {
-    return "Not a Valid URL!";
+    return ERROR_MESSAGE_U;
   }
+  const cache = "http://webcache.googleusercontent.com/search?q=cache:";
   return await axios
-    .get(url, OPTIONS)
+    .get((cache + url), OPTIONS)
     .then(async function (response) {
       const pageHTMLString = cheerio.load(response.data).html();
       
@@ -122,11 +124,14 @@ const getPageHTML = async function (url) {
       let root = HTMLParser.parse(pageHTMLString);
 
       // selects all scripts tag to delete all embedded jaavscript
-      let allScripts = root.getElementsByTagName('script');
-      for(var i = 0; i < allScripts.length; i++) {
-        var script = allScripts[i];
-        script.remove();
+      if (url.includes("medium") || url.includes("towardsdata")) {
+        let allScripts = root.getElementsByTagName('script');
+        for (var i = 0; i < allScripts.length; i++) {
+          var script = allScripts[i];
+          script.remove();
+        }
       }
+      root.getElementById('bN015htcoyT__google-cache-hdr').remove();
 
       return root.innerHTML;
     })
@@ -135,16 +140,11 @@ const getPageHTML = async function (url) {
     });
 };
 
-// Solution 2
-// Cache page 
-// scraper to get title of article
-// search to google search engine, get cache url, return 
-
 module.exports = {
   getPageHTML
 };
 
-// const url = "https://www.washingtonpost.com/investigations/2022/07/24/grooming-sex-ed-nebraska-judith-reisman/";
+// const url = "https://www.wsj.com/articles/investors-bet-fed-will-need-to-cut-interest-rates-next-year-to-bolster-the-economy-11658694486?mod=hp_lead_pos1";
 // const test = getPageHTML(url);
 // test.then(function(data) {
 //   console.log(data);

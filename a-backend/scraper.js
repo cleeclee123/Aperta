@@ -124,7 +124,10 @@ const getPageHTML = async function (url) {
       let root = HTMLParser.parse(pageHTMLString);
 
       // selects all scripts tag to delete all embedded jaavscript
-      if (url.includes("medium") || url.includes("towardsdata")) {
+      if (url.includes("medium") || 
+          url.includes("towardsdata") ||
+          url.includes("telegraph")
+        ) {
         let allScripts = root.getElementsByTagName('script');
         for (var i = 0; i < allScripts.length; i++) {
           var script = allScripts[i];

@@ -58,7 +58,7 @@ const rotateUserAgent = async function () {
       $("tr > td:nth-child(2)").each((index, element) => {
         if ($(element).text().includes(" ") && $(element).text().includes("(Windows") ||
             $(element).text().includes(" ") && $(element).text().includes("(Macintosh") ||
-            $(element).text().includes(" ") && $(element).text().includes("(Linux ")) {
+            $(element).text().includes(" ") && $(element).text().includes("(Linux")) {
           userAgents[index] = $(element).text();
         }
       });
